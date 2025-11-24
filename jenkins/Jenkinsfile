@@ -50,15 +50,8 @@ pipeline {
         withCredentials([string(credentialsId: 'slack-webhook', variable: 'SLACK_WEBHOOK')]) {
           sh '''
             STATUS="SUCCESS"
-            PAYLOAD=$(cat <<EOF
-            {
-              "text": "*Jenkins Pipeline* — ${JOB_NAME} #${BUILD_NUMBER}: ${STATUS}",
-              "attachments": [
-                {"text": "Image: ${DOCKER_IMAGE}:${BRANCH}-${BUILD_NUMBER}"}
-              ]
-            }
-            EOF
-            )
+            PAYLOAD="{\"text\": \"*Jenkins Pipeline* — ${JOB_NAME} #${BUILD_NUMBER}: ${STATUS}\", \
+                      \"attachments\": [{\"text\": \"Image: ${DOCKER_IMAGE}:${BRANCH}-${BUILD_NUMBER}\"}]}"
             curl -X POST -H 'Content-type: application/json' --data "$PAYLOAD" "$SLACK_WEBHOOK"
           '''
         }
@@ -70,10 +63,7 @@ pipeline {
     failure {
       withCredentials([string(credentialsId: 'slack-webhook', variable: 'SLACK_WEBHOOK')]) {
         sh '''
-          PAYLOAD=$(cat <<EOF
-          {"text": "*Jenkins Pipeline* — ${JOB_NAME} #${BUILD_NUMBER}: FAILED"}
-          EOF
-          )
+          PAYLOAD="{\"text\": \"*Jenkins Pipeline* — ${JOB_NAME} #${BUILD_NUMBER}: FAILED\"}"
           curl -X POST -H 'Content-type: application/json' --data "$PAYLOAD" "$SLACK_WEBHOOK"
         '''
       }
