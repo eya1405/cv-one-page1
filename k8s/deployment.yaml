@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cv-one-page
+  namespace: cv-one-page
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cv-one-page
+  template:
+    metadata:
+      labels:
+        app: cv-one-page
+    spec:
+      containers:
+      - name: cv-container
+        image: najaheya/cv-one-page1:latest
+        ports:
+        - containerPort: 80
