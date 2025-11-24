@@ -1,0 +1,91 @@
+/* Google Font */
+body {
+    font-family: "Poppins", sans-serif;
+    margin: 0;
+    background: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Header */
+header {
+    background: #0d6efd;
+    color: #fff;
+    padding: 40px 0;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 40px;
+}
+
+.job-title {
+    font-size: 18px;
+    margin-top: 5px;
+}
+
+.contact p {
+    margin: 2px;
+}
+
+/* Sections */
+.section {
+    max-width: 900px;
+    margin: 40px auto;
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.section h2 {
+    color: #0d6efd;
+    margin-bottom: 15px;
+}
+
+/* Skills */
+.skills-list {
+    list-style: none;
+    padding: 0;
+}
+
+.skills-list li {
+    background: #e9f1ff;
+    padding: 10px;
+    margin: 5px 0;
+    border-left: 4px solid #0d6efd;
+}
+
+/* Experience timeline */
+.job {
+    margin-bottom: 20px;
+}
+
+.job h3 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.job span {
+    font-size: 14px;
+    color: gray;
+}
+
+/* Education */
+.edu-item h3 {
+    margin: 0;
+}
+
+.edu-item span {
+    color: gray;
+}
+
+/* Footer */
+footer {
+    background: #0d6efd;
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    margin-top: 40px;
+}

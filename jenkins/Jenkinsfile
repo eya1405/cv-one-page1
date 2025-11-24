@@ -1,0 +1,82 @@
+pipeline {
+  agent any
+
+  environment {
+    DOCKER_IMAGE = "eya1405/cv-one-page1"
+    GIT_URL = "https://github.com/eya1405/cv-one-page1.git"
+    BRANCH = "main"
+  }
+
+  triggers {
+    pollSCM('H/5 * * * *') // check every 5 minutes
+  }
+
+  options {
+    timestamps()
+    buildDiscarder(logRotator(numToKeepStr: '20'))
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        git branch: "${env.BRANCH}", url: "${env.GIT_URL}"
+      }
+    }
+
+    stage('Docker Build') {
+      steps {
+        sh '''
+          docker --version
+          docker build -t ${DOCKER_IMAGE}:${BRANCH}-${BUILD_NUMBER} -f docker/Dockerfile .
+        '''
+      }
+    }
+
+    stage('Docker Push') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+          sh '''
+            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+            docker push ${DOCKER_IMAGE}:${BRANCH}-${BUILD_NUMBER}
+            docker tag ${DOCKER_IMAGE}:${BRANCH}-${BUILD_NUMBER} ${DOCKER_IMAGE}:latest
+            docker push ${DOCKER_IMAGE}:latest
+          '''
+        }
+      }
+    }
+
+    stage('Notify Slack') {
+      steps {
+        withCredentials([string(credentialsId: 'slack-webhook', variable: 'SLACK_WEBHOOK')]) {
+          sh '''
+            STATUS="SUCCESS"
+            PAYLOAD=$(cat <<EOF
+            {
+              "text": "*Jenkins Pipeline* — ${JOB_NAME} #${BUILD_NUMBER}: ${STATUS}",
+              "attachments": [
+                {"text": "Image: ${DOCKER_IMAGE}:${BRANCH}-${BUILD_NUMBER}"}
+              ]
+            }
+            EOF
+            )
+            curl -X POST -H 'Content-type: application/json' --data "$PAYLOAD" "$SLACK_WEBHOOK"
+          '''
+        }
+      }
+    }
+  }
+
+  post {
+    failure {
+      withCredentials([string(credentialsId: 'slack-webhook', variable: 'SLACK_WEBHOOK')]) {
+        sh '''
+          PAYLOAD=$(cat <<EOF
+          {"text": "*Jenkins Pipeline* — ${JOB_NAME} #${BUILD_NUMBER}: FAILED"}
+          EOF
+          )
+          curl -X POST -H 'Content-type: application/json' --data "$PAYLOAD" "$SLACK_WEBHOOK"
+        '''
+      }
+    }
+  }
+}
