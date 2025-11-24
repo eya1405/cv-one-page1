@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-    DOCKER_IMAGE = "eya1405/cv-one-page1"
+    DOCKER_IMAGE = "najaheya/cv-one-page1"
     GIT_URL = "https://github.com/eya1405/cv-one-page1.git"
     BRANCH = "main"
   }
