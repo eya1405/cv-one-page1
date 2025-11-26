@@ -1,0 +1,8 @@
+- name: Préparation DEVOPS-LAB
+  hosts: devops_lab
+  become: true
+  roles:
+    - common
+    - docker
+    - terraform
+    - jenkins

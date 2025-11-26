@@ -1,0 +1,30 @@
+- name: Add Jenkins key
+  apt_key:
+    url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+    state: present
+
+- name: Add Jenkins repository
+  apt_repository:
+    repo: "deb https://pkg.jenkins.io/debian-stable binary/"
+    state: present
+
+- name: Install Java and Jenkins
+  apt:
+    name:
+      - fontconfig
+      - openjdk-17-jre
+      - jenkins
+    state: present
+    update_cache: yes
+
+- name: Enable and start Jenkins
+  systemd:
+    name: jenkins
+    enabled: yes
+    state: started
+
+- name: Add Jenkins user to docker group
+  user:
+    name: jenkins
+    groups: docker
+    append: yes
